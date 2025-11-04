@@ -1,20 +1,23 @@
-const express=require('express')
-const app=express()
-const mongoose=require('mongoose')
-const cors=require('cors')
-const CreateRouter=require('./Router/router')
-const dotenv=require('dotenv')
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const cors = require('cors');
+const CreateRouter = require('./Router/router');
+const dotenv = require('dotenv');
 
-dotenv.config()
+dotenv.config();
 
-mongoose.connect(process.env.DB_STRING)
-.then(()=>{
-    console.log('DB connect successfully')
-})
+mongoose.set('strictQuery', false);
 
-app.use(cors())
-app.use(express.json())
-app.use('/home',CreateRouter)
-app.listen(8080,()=>{
-     console.log('server is running')
-})
+mongoose.connect(process.env.DB_STRING, { serverSelectionTimeoutMS: 5000 })
+  .then(() => console.log("✅ Database Connected Successfully"))
+  .catch(err => console.log("❌ Database Connection Error:", err.message));
+
+app.use(cors());
+app.use(express.json());
+app.use('/home', CreateRouter);
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port: ${PORT}`);
+});
